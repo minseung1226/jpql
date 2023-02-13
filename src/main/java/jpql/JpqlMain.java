@@ -13,47 +13,42 @@ public class JpqlMain {
         EntityTransaction tx = em.getTransaction();
         tx.begin();
         try{
+            Team teamA = new Team();
+            teamA.setName("팀A");
+            Team teamB = new Team();
+            teamB.setName("팀B");
 
-                Member member = new Member();
-                //member.setUsername("teamA");
-                member.setAge(10);
-                member.setMemberType(MemberType.ADMIN);
-
-            Team team = new Team();
-            team.setName("teamA");
-
-            em.persist(team);
-            em.persist(member);
+            em.persist(teamA);
+            em.persist(teamB);
 
 
+            Member member1 = new Member();
+            member1.setUsername("회원1");
+            member1.setAge(10);
+            Member member2 = new Member();
+            member2.setUsername("회원2");
+            member2.setAge(10);
+            Member member3 = new Member();
+            member3.setUsername("회원3");
+            member3.setAge(10);
+
+            member1.setTeam(teamA);
+            member2.setTeam(teamA);
+            member3.setTeam(teamB);
+
+            em.persist(member1);
+            em.persist(member2);
+            em.persist(member3);
 
             em.flush();
             em.clear();
 
 
-            String query1="select " +
-                    " case when m.age<= 10 then '학생요금'"+
-                    "      when m.age >=60 then '경로요금'"+
-                    "      else '일반요금' end"+
-                    "  from Member m";
+            int resultCount = em.createQuery("update Member m set m.age=20").executeUpdate();
 
-            String query2="select coalesce(m.username,'이름없는 회원') from Member m ";
+            System.out.println(resultCount);
 
-            String query3 ="select nullif(m.username,'관리자') from Member m ";
 
-            String query4 ="select concat('a','b') from Member m ";
-
-            String query5="select subString(m.username,2,3) from Member m";
-
-            String query6="select locate('de','abcdefg') from Member m ";
-
-            String query7= "select size(t.members) from Team t ";
-
-            List<Integer> resultList = em.createQuery(query7, Integer.class).getResultList();
-
-            for (Integer integer : resultList) {
-                System.out.println(integer);
-            }
             tx.commit();
         }catch (Exception e){
             System.out.println("예욉 ㅏㅂㄹ생");
